@@ -14,7 +14,7 @@ class m210516_151251_create_store_table extends Migration
     {
         $this->createTable('{{%store}}', [
             'id' => $this->primaryKey(),
-            'title' => $this->string('150'),
+            'title' => $this->string('150')->notNull(),
         ]);
 
         for ($i = 1; $i < 4; $i++) {

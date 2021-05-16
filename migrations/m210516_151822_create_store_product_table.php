@@ -15,7 +15,8 @@ class m210516_151822_create_store_product_table extends Migration
         $this->createTable('{{%store_product}}', [
             'id' => $this->primaryKey(),
             'store_id' => $this->integer()->notNull(),
-            'upc' => $this->string(50),
+            'store_product_import_id' => $this->integer(),
+            'upc' => $this->string(50)->unique()->notNull(),
             'title' => $this->string(150),
             'price' => $this->integer(),
         ]);
