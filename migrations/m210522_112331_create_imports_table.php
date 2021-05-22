@@ -3,32 +3,33 @@
 use yii\db\Migration;
 
 /**
- * Handles the creation of table `{{%store_product_import}}`.
+ * Handles the creation of table `{{%imports}}`.
  */
-class m210516_155538_create_store_product_import_table extends Migration
+class m210522_112331_create_imports_table extends Migration
 {
     /**
      * {@inheritdoc}
      */
     public function safeUp()
     {
-        $this->createTable('{{%store_product_import}}', [
+        $this->createTable('{{%imports}}', [
             'id' => $this->primaryKey(),
             'store_id' => $this->integer()->notNull(),
             'failed' => $this->integer()->defaultValue(0),
-            'status' => "ENUM('New', 'Processing', 'done') NOT NULL DEFAULT `New`",
+            'status' => "ENUM('New', 'Processing', 'done') NOT NULL DEFAULT 'New'",
+            'file_name' => $this->string(100),
             'created_at' => $this->dateTime(),
         ]);
 
         $this->createIndex(
-            'idx-store_product_import-store_id',
-            'store_product_import',
+            'idx-imports-store_id',
+            'imports',
             'store_id'
         );
 
         $this->addForeignKey(
-            'fk-store_product_import-store_id',
-            'store_product_import',
+            'fk-imports-store_id',
+            'imports',
             'store_id',
             'store',
             'id',
@@ -41,6 +42,6 @@ class m210516_155538_create_store_product_import_table extends Migration
      */
     public function safeDown()
     {
-        $this->dropTable('{{%store_product_import}}');
+        $this->dropTable('{{%imports}}');
     }
 }

@@ -43,14 +43,14 @@ $config = [
             ],
         ],
         'db' => $db,
-        /*
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'import/<page:[\w\-]+>' => 'import/view',
+                'import/<page:[\w\-]+>' => 'import/upload',
             ],
         ],
-        */
     ],
     'params' => $params,
 ];

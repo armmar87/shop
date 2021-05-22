@@ -18,7 +18,7 @@ class m210516_151822_create_store_product_table extends Migration
             'store_product_import_id' => $this->integer(),
             'upc' => $this->string(50)->unique()->notNull(),
             'title' => $this->string(150),
-            'price' => $this->integer(),
+            'price' => $this->double(),
         ]);
 
         $this->createIndex(
