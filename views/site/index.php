@@ -3,6 +3,7 @@
 /* @var $this yii\web\View */
 /* @var $form yii\bootstrap\ActiveForm */
 /* @var $importModel app\models\Import */
+/* @var $stores app\models\Import */
 
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
@@ -30,6 +31,8 @@ $this->title = 'My Yii Application';
                         'options' => ['enctype' => 'multipart/form-data']
                     ]);
                 ?>
+
+                <?= $form->field($importModel, 'store_id')->dropDownList($stores) ?>
 
                 <?= $form->field($importModel, 'importFiles[]')->fileInput(['multiple' => true, 'accept' => 'csv/*']) ?>
 

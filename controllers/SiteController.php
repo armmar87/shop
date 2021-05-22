@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\ImportForm;
+use app\models\Store;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -64,8 +65,14 @@ class SiteController extends Controller
     public function actionIndex()
     {
         $importModel = new ImportForm();
+        $allStores = Store::find()->all();
 
-        return $this->render('index', compact('importModel'));
+        $stores = [];
+        foreach ($allStores as $store) {
+            $stores[$store->id] = $store->title;
+        }
+
+        return $this->render('index', compact('importModel', 'stores'));
     }
 
     /**

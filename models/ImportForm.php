@@ -11,6 +11,7 @@ use yii\base\Model;
 class ImportForm extends Model
 {
     public $importFiles;
+    public $store_id;
 
     /**
      * @return array the validation rules.
@@ -18,6 +19,8 @@ class ImportForm extends Model
     public function rules()
     {
         return [
+            ['store_id', 'required'],
+            ['store_id', 'number'],
             [
                 ['importFiles'],
                 'file',

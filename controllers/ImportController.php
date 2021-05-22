@@ -23,7 +23,6 @@ class ImportController extends Controller
 
     public function actionUpload()
     {
-
         $importForm = new ImportForm();
 
         if (Yii::$app->request->isPost) {
@@ -34,7 +33,7 @@ class ImportController extends Controller
                     $file->saveAs('uploads/' . $file->name);
                     $import = new Import();
                     $import->file_name = $file->name;
-                    $import->store_id = 2;
+                    $import->store_id = $_POST['ImportForm']['store_id'];
                     $import->save();
                 }
                 return $this->redirect(['view']);
