@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Import;
 use app\models\ImportForm;
 use app\models\Store;
 use Yii;
@@ -11,6 +12,8 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use yii\web\UploadedFile;
+use function Couchbase\defaultDecoder;
 
 
 class SiteController extends Controller
@@ -71,6 +74,38 @@ class SiteController extends Controller
         foreach ($allStores as $store) {
             $stores[$store->id] = $store->title;
         }
+
+        return $this->render('index', compact('importModel', 'stores'));
+    }
+
+    public function actionUpload()
+    {
+        $importForm = new ImportForm();
+        if (Yii::$app->request->isPost) {
+            $importForm->importFiles = UploadedFile::getInstances($importForm, 'importFiles');
+
+            if ($importForm->validate()) {
+                foreach ($importForm->importFiles as $file) {
+
+                    $time = time();
+                    $fileName = $time . '_' . $file->name;
+                    if (!is_dir(Yii::$app->basePath . '/web/uploads/')) {
+                        mkdir(Yii::$app->basePath . '/web/uploads/');
+                    }
+                    if ((new Import())->store($file->name, $time)) {
+                        $file->saveAs(Yii::$app->basePath . '/web/uploads/' . $fileName);
+                    }
+                }
+                return $this->redirect(['imports']);
+            }
+        }
+
+        return $this->redirect(['index']);
+    }
+
+    public function actionImports()
+    {
+        var_dump('actionImports'); die;
 
         return $this->render('index', compact('importModel', 'stores'));
     }

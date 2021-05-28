@@ -18,7 +18,7 @@ class m210522_112331_create_imports_table extends Migration
             'failed' => $this->integer()->defaultValue(0),
             'status' => "ENUM('New', 'Processing', 'done') NOT NULL DEFAULT 'New'",
             'file_name' => $this->string(100),
-            'created_at' => $this->dateTime(),
+            'created_at' => $this->integer(),
         ]);
 
         $this->createIndex(

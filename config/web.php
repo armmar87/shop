@@ -48,7 +48,7 @@ $config = [
             'showScriptName' => false,
             'rules' => [
                 'import/<page:[\w\-]+>' => 'import/view',
-                'import/<page:[\w\-]+>' => 'import/upload',
+//                'import/<page:[\w\-]+>' => 'import/upload',
             ],
         ],
     ],

@@ -19,8 +19,8 @@ class ImportForm extends Model
     public function rules()
     {
         return [
-            ['store_id', 'required'],
-            ['store_id', 'number'],
+//            ['store_id', 'required'],
+//            ['store_id', 'number'],
             [
                 ['importFiles'],
                 'file',

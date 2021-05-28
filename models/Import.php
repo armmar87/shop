@@ -2,8 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-use yii\base\Model;
 use yii\db\ActiveRecord;
 
 /**
@@ -27,4 +25,16 @@ class Import extends ActiveRecord
         ];
     }
 
+    /**
+     * @param string $fileName
+     * @return bool
+     */
+    public function store(string $fileName, string $timestamp): bool
+    {
+        $this->file_name = $fileName;
+        $this->store_id = $_POST['ImportForm']['store_id'];
+        $this->created_at = $timestamp;
+
+        return $this->save();
+    }
 }
