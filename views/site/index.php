@@ -25,7 +25,7 @@ $this->title = 'My Yii Application';
             <div class="col-lg-5">
 
                 <?php $form = ActiveForm::begin([
-                        'action' => 'upload',
+                        'action' => 'site/upload',
                         'id' => 'upload-form',
                         'method' => 'post',
                         'options' => ['enctype' => 'multipart/form-data']

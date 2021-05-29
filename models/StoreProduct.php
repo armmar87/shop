@@ -7,22 +7,10 @@ use yii\db\ActiveRecord;
 /**
  * ContactForm is the model behind the contact form.
  */
-class Import extends ActiveRecord
+class StoreProduct extends ActiveRecord
 {
     public static function tableName() {
-        return 'imports';
-    }
-
-    public function rules() {
-        return [
-
-        ];
-    }
-
-    public function attributeLabels() {
-        return [
-
-        ];
+        return 'store_product';
     }
 
     /**

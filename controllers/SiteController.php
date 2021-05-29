@@ -5,6 +5,8 @@ namespace app\controllers;
 use app\models\Import;
 use app\models\ImportForm;
 use app\models\Store;
+use app\models\StoreProduct;
+use jobs\ImportJob;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -13,7 +15,6 @@ use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
 use yii\web\UploadedFile;
-use function Couchbase\defaultDecoder;
 
 
 class SiteController extends Controller
@@ -83,18 +84,61 @@ class SiteController extends Controller
         $importForm = new ImportForm();
         if (Yii::$app->request->isPost) {
             $importForm->importFiles = UploadedFile::getInstances($importForm, 'importFiles');
-
             if ($importForm->validate()) {
                 foreach ($importForm->importFiles as $file) {
-
                     $time = time();
                     $fileName = $time . '_' . $file->name;
-                    if (!is_dir(Yii::$app->basePath . '/web/uploads/')) {
-                        mkdir(Yii::$app->basePath . '/web/uploads/');
+                    if (!is_dir($this->uploadFilePath())) {
+                        mkdir($this->uploadFilePath());
                     }
-                    if ((new Import())->store($file->name, $time)) {
-                        $file->saveAs(Yii::$app->basePath . '/web/uploads/' . $fileName);
+                    if ($importId = (new Import())->store($file->name, $time)) {
+                        $file->saveAs($this->uploadFilePath() . $fileName);
                     }
+
+                    $row = 1;
+                    $columnsData = [];
+                    $dbColumns = [];
+                    if (($handle = fopen($this->uploadFilePath() . $fileName, "r")) !== FALSE) {
+                        while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+                            if ($row !== 1) {
+                                $columnsData[] = $data;
+                            } else {
+                                $dbColumns = $data;
+                            }
+                            $row++;
+                        }
+                        fclose($handle);
+                    }
+                    $dbData = [];
+                    foreach ($columnsData as $key => $columnData) {
+                        foreach ($columnData as $dataKey => $data) {
+                            $dbData[$key][$dbColumns[$dataKey]] = $data;
+                        }
+                    }
+
+                    foreach ($dbData as $data) {
+                        if ($data['upc'] !== '') {
+                            $storeProduct = StoreProduct::find()->where(['upc' => $data['upc']])->one();
+                            if (!$storeProduct) {
+                                $storeProduct = new StoreProduct();
+                            }
+                            $storeProduct->store_id = $_POST['ImportForm']['store_id'];
+                            $storeProduct->store_product_import_id = $importId;
+                            $storeProduct->upc = $data['upc'];
+                            $storeProduct->title = $data['title'];
+                            $storeProduct->price = $data['price'];
+                            $storeProduct->save();
+                        } else {
+                            $import = Import::findOne($importId);
+                            $import->failed = $import->failed + 1;
+                            $import->save();
+                        }
+                    }
+//                    Yii::$app->queue->push(new ImportJob([
+//                        'file' => $fileName,
+//                        'importId' => $importId,
+//                        'storeId' => $_POST['ImportForm']['store_id'],
+//                    ]));
                 }
                 return $this->redirect(['imports']);
             }
@@ -102,6 +146,12 @@ class SiteController extends Controller
 
         return $this->redirect(['index']);
     }
+
+    public function uploadFilePath(): string
+    {
+        return Yii::$app->basePath . '/web/uploads/';
+    }
+
 
     public function actionImports()
     {
