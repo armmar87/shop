@@ -37,7 +37,7 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
         }
         $failed = 0;
         foreach ($dbData as $data) {
-            if ($data['upc'] !== '') {
+            if (isset($data['upc']) && $data['upc'] !== '') {
                 $storeProduct = StoreProduct::findOne([
                     'upc' => $data['upc'],
                     'store_id' => $import->store_id
@@ -48,8 +48,8 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
                 }
                 $storeProduct->store_product_import_id = $import->id;
                 $storeProduct->upc = $data['upc'];
-                $storeProduct->title = $data['title'];
-                $storeProduct->price = $data['price'];
+                $storeProduct->title = $data['title'] ?? NULL;
+                $storeProduct->price = $data['price'] ?? NULL;
                 $storeProduct->save();
             } else {
                 $failed++;
