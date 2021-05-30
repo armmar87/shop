@@ -3,6 +3,7 @@ namespace app\jobs;
 
 use app\models\Import;
 use app\models\StoreProduct;
+use PhpOffice\PhpSpreadsheet\Reader\Csv;
 use \yii\base\BaseObject;
 
 class ImportJob extends BaseObject implements \yii\queue\JobInterface
@@ -15,24 +16,22 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
 
         $import = Import::findOne($this->importId);
         $fileName = $import->created_at . '_' . $import->file_name;
-        $row = 1;
-        $dbColumns = [];
-        $columnsData = [];
-        if (($handle = fopen(\Yii::$app->basePath . '/web/uploads/' . $fileName, "r")) !== FALSE) {
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-                if ($row !== 1) {
-                    $columnsData[] = $data;
-                } else {
-                    $dbColumns = $data;
-                }
-                $row++;
-            }
-            fclose($handle);
+        $arr_file = explode('.', $fileName);
+        switch (end($arr_file)) {
+            case 'csv':
+                $reader = new Csv();
+                break;
+            default:
+                //Can be another file type;
         }
+        $spreadsheet = $reader->load(\Yii::$app->basePath . '/web/uploads/' . $fileName);
+        $sheetsData = $spreadsheet->getActiveSheet()->toArray();
         $dbData = [];
-        foreach ($columnsData as $key => $columnData) {
-            foreach ($columnData as $dataKey => $data) {
-                $dbData[$key][$dbColumns[$dataKey]] = $data;
+        foreach ($sheetsData as $key => $sheetData) {
+            if ($key !== 0) {
+                foreach ($sheetData as $dataKey => $data) {
+                    $dbData[$key][$sheetsData[0][$dataKey]] = $data;
+                }
             }
         }
         $failed = 0;

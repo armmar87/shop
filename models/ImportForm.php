@@ -26,7 +26,7 @@ class ImportForm extends Model
                 'file',
                 'maxSize' => 5120000,
                 'skipOnEmpty' => false,
-                'extensions' => 'csv',
+                'extensions' => ['csv', 'xls'],
                 'maxFiles' => 10,
                 'checkExtensionByMimeType' => false
             ]
