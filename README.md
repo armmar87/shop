@@ -7,6 +7,6 @@
 
 1. Clone or upload project
 2. Run command `composer install`
-3. Run command `php yii migrate`
-4. If linux platform run command `sudo chmod -R 777 web/`
-5. Create queue folder in runtime directory `runtime/queque`
+3. Run command `php yii migrate
+4. Run command `sudo chmod -R 777 web/` and `sudo chmod -R 777 runtime/`
+
