@@ -9,5 +9,7 @@ use yii\db\ActiveRecord;
  */
 class Store extends ActiveRecord
 {
-
+    public static function tableName() {
+        return 'store';
+    }
 }

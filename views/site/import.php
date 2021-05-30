@@ -1,8 +1,7 @@
 <?php
 
-/* @var $this yii\web\View */
-/* @var $form yii\bootstrap\ActiveForm */
-/* @var $model app\models\Import */
+/* @var $this yii\base\Widget */
+/* @var $imports app\models\Import */
 
 
 $this->title = 'My Yii Application';
@@ -17,11 +16,25 @@ $this->title = 'My Yii Application';
     <div class="body-content">
 
         <div class="row">
-            <div class="col-lg-5">
+                <table style="width:100%">
+                    <tr>
+                        <th>N</th>
+                        <th>Status</th>
+                        <th>Store Name</th>
+                        <th>Products Import</th>
+                        <th>Failed Imports</th>
+                    </tr>
+                    <?php foreach ($imports as $import) { ?>
+                        <tr>
+                            <td><?php echo $import->id ?></td>
+                            <td><?php echo $import->status ?></td>
+                            <td><?php echo $import->store->title ?></td>
+                            <td><?php echo $import->storeProductsCount ?></td>
+                            <td><?php echo $import->failed ?></td>
+                        </tr>
+                    <?php } ?>
+                </table>
 
-
-
-            </div>
         </div>
 
     </div>

@@ -13,16 +13,19 @@ class Import extends ActiveRecord
         return 'imports';
     }
 
-    public function rules() {
-        return [
-
-        ];
+    public function getStore()
+    {
+        return $this->hasOne(Store::class, ['id' => 'store_id']);
     }
 
-    public function attributeLabels() {
-        return [
+    public function getStoreProducts()
+    {
+        return $this->hasMany(StoreProduct::class, ['store_product_import_id' => 'id']);
+    }
 
-        ];
+    public function getStoreProductsCount()
+    {
+        return $this->getStoreProducts()->count();
     }
 
     /**

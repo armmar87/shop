@@ -113,8 +113,8 @@ class SiteController extends Controller
 
     public function actionImports()
     {
-        var_dump('actionImports'); die;
+        $imports = Import::find()->all();
 
-        return $this->render('index', compact('importModel', 'stores'));
+        return $this->render('import', compact('imports'));
     }
 }

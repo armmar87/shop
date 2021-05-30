@@ -1,7 +1,6 @@
 <?php
 namespace app\jobs;
 
-use app\controllers\SiteController;
 use app\models\Import;
 use app\models\StoreProduct;
 use \yii\base\BaseObject;
@@ -39,10 +38,10 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
         $failed = 0;
         foreach ($dbData as $data) {
             if ($data['upc'] !== '') {
-                $storeProduct = StoreProduct::find()->where([
+                $storeProduct = StoreProduct::findOne([
                     'upc' => $data['upc'],
-                    'store_id' => $import->store_id,
-                ])->one();
+                    'store_id' => $import->store_id
+                ]);
                 if (!$storeProduct) {
                     $storeProduct = new StoreProduct();
                     $storeProduct->store_id = $this->storeId;
@@ -56,9 +55,12 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
                 $failed++;
             }
             $import->failed = $failed;
+            if ($import->status !== 'Processing') {
+                $import->status = 'Processing';
+                $import->save();
+            }
         }
         $import->status = 'Done';
         $import->save();
-
     }
 }
