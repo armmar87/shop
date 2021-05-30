@@ -6,7 +6,7 @@ $db = require __DIR__ . '/db.php';
 $config = [
     'id' => 'basic-console',
     'basePath' => dirname(__DIR__),
-    'bootstrap' => ['log'],
+    'bootstrap' => ['queue'],
     'controllerNamespace' => 'app\commands',
     'aliases' => [
         '@bower' => '@vendor/bower-asset',
@@ -14,6 +14,11 @@ $config = [
         '@tests' => '@app/tests',
     ],
     'components' => [
+        'queue' => [
+            'class' => \yii\queue\file\Queue::class,
+            'path' => '@runtime/queue',
+            'as log' => \yii\queue\LogBehavior::class,
+        ],
         'cache' => [
             'class' => 'yii\caching\FileCache',
         ],
