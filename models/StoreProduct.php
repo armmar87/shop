@@ -13,17 +13,12 @@ class StoreProduct extends ActiveRecord
         return 'store_product';
     }
 
-    /**
-     * @param string $fileName
-     * @return integer
-     */
-    public function store(string $fileName, string $timestamp): int
+    public function createOrUpdate(array $data)
     {
-        $this->file_name = $fileName;
-        $this->store_id = $_POST['ImportForm']['store_id'];
-        $this->created_at = $timestamp;
+        $this->store_product_import_id = $data['import_id'];
+        $this->upc = $data['upc'];
+        $this->title = $data['title'] ?? NULL;
+        $this->price = $data['price'] ?? NULL;
         $this->save();
-
-        return $this->id;
     }
 }

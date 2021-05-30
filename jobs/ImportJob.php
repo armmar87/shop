@@ -26,16 +26,9 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
         }
         $spreadsheet = $reader->load(\Yii::$app->basePath . '/web/uploads/' . $fileName);
         $sheetsData = $spreadsheet->getActiveSheet()->toArray();
-        $dbData = [];
-        foreach ($sheetsData as $key => $sheetData) {
-            if ($key !== 0) {
-                foreach ($sheetData as $dataKey => $data) {
-                    $dbData[$key][$sheetsData[0][$dataKey]] = $data;
-                }
-            }
-        }
+        $productsData = $this->getProductsData($sheetsData);
         $failed = 0;
-        foreach ($dbData as $data) {
+        foreach ($productsData as $data) {
             if (isset($data['upc']) && $data['upc'] !== '') {
                 $storeProduct = StoreProduct::findOne([
                     'upc' => $data['upc'],
@@ -45,11 +38,8 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
                     $storeProduct = new StoreProduct();
                     $storeProduct->store_id = $this->storeId;
                 }
-                $storeProduct->store_product_import_id = $import->id;
-                $storeProduct->upc = $data['upc'];
-                $storeProduct->title = $data['title'] ?? NULL;
-                $storeProduct->price = $data['price'] ?? NULL;
-                $storeProduct->save();
+                $data['import_id'] = $import->id;
+                $storeProduct->createOrUpdate($data);
             } else {
                 $failed++;
             }
@@ -61,5 +51,19 @@ class ImportJob extends BaseObject implements \yii\queue\JobInterface
         }
         $import->status = 'Done';
         $import->save();
+    }
+
+    private function getProductsData(array $sheetsData): array
+    {
+        $productsData = [];
+        foreach ($sheetsData as $key => $sheetData) {
+            if ($key !== 0) {
+                foreach ($sheetData as $dataKey => $data) {
+                    $productsData[$key][$sheetsData[0][$dataKey]] = $data;
+                }
+            }
+        }
+
+        return $productsData;
     }
 }
